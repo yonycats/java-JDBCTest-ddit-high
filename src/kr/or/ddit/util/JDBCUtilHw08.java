@@ -17,6 +17,7 @@ public class JDBCUtilHw08 {
 	private static JDBCUtilHw08 instance = null;
 
 	private JDBCUtilHw08() {} 
+	
 	public static JDBCUtilHw08 getInstance() {
 		if(instance == null) 
 			instance = new JDBCUtilHw08();
@@ -44,46 +45,31 @@ public class JDBCUtilHw08 {
 	}
 	
 	
-	public void searchBoard() {
+	public void search() {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	public void deleteBoard() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void updateBoard() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void insertBoard(String sql, String boardTitle, String boardWriter, String boardContent) {
-		
-		List<Map<String, Object>> result = null;
-		
+	// update, delete, insert
+	public void update(String sql, List<Object> param) {
+		 
 		try {
 			conn = DriverManager.getConnection(url, user, password);
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, boardTitle);
-			pstmt.setString(2, boardWriter);
-			pstmt.setString(3, boardContent);
+			for (int i=0; i<param.size(); i++) {
+				pstmt.setObject(i+1, param.get(i));
+			} 
 			
 			int cnt = pstmt.executeUpdate();
-			
-			if (cnt > 0) {
-				System.out.println("등록 성공!");
-			} else {
-				System.out.println("등록 실패!");
-			}
+			printResult(cnt);
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.out.println();
+			System.out.println("DB연결이 실패하거나, SQL문이 틀렸습니다.");
+			System.out.print("사유 : " + e.getMessage());
 		} finally {
 			close(conn, stmt, pstmt, rs);
 		}
@@ -91,10 +77,54 @@ public class JDBCUtilHw08 {
 	}
 
 
-	public void printList() {
-		// TODO Auto-generated method stub
+	public List<Map<String, Object>> SelectList(String sql, List<Object> param) {
 		
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		
+		try {
+			conn = DriverManager.getConnection(url, user, password);
+			pstmt = conn.prepareStatement(sql);
+
+			for (int i=0; i<param.size(); i++) {
+				pstmt.setObject(i+1, param.get(i));
+			} 
+			
+			rs = pstmt.executeQuery();
+			
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			
+			while (rs.next()) {
+				Map<String, Object> row = new HashMap<String, Object>();
+				for (int i=1; i<=columnCount; i++) {
+					String key = rsmd.getColumnName(i);
+					Object value = rs.getObject(i);
+					row.put(key, value);
+				}
+				list.add(row);
+			}
+			
+		} catch (SQLException e) {
+//			e.printStackTrace();
+			System.out.println();
+			System.out.println("DB연결이 실패하거나, SQL문이 틀렸습니다.");
+			System.out.print("사유 : " + e.getMessage());
+		} finally {
+			close(conn, stmt, pstmt, rs);
+		}
+		
+		return list;
 	}
 	
+	
+	public void printResult (int cnt) {
+		System.out.println();
+		if (cnt > 0) {
+			System.out.println("(*°▽°*) 성공! (*°▽°*)");
+		} else {
+			System.out.println("(°ロ°) 실패! (°ロ°)");
+		}
+	}
+
 	
 }

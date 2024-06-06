@@ -1,5 +1,9 @@
 package homework;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import kr.or.ddit.util.JDBCUtilHw08;
 
@@ -38,6 +42,7 @@ public class Homework08_0605 {
 	JDBCUtilHw08 jdbc = JDBCUtilHw08.getInstance();
 	
 	private Scanner sc = new Scanner(System.in);
+	final int pageSize = 5;
 	
 	public static void main(String[] args) {
 		Homework08_0605 obj = new Homework08_0605();
@@ -90,13 +95,60 @@ public class Homework08_0605 {
 
 
 	private void deleteBoard() {
-		// TODO Auto-generated method stub
+
+		String sql = " DELETE FROM JDBC_BOARD\r\n" + 
+					 " WHERE BOARD_NO = ?";
+
+		System.out.print("삭제할 게시글 번호를 선택하세요 : ");
+		int num = sc.nextInt();
+		sc.nextLine();
+		
+		System.out.println("정말로 삭제하시겠습니까?");
+		System.out.println("1. 삭제\t2. 취소");
+		int sel = sc.nextInt();
+		sc.nextLine();
+		
+		if (sel==1) {
+			List<Object> param = new ArrayList<Object>();
+			
+			param.add(num);
+			
+			jdbc.update(sql, param);
+		} else if (sel==2) { 
+			System.out.println("삭제가 취소되었습니다.");
+		}
 		
 	}
 
 
 	private void updateBoard() {
 
+		String sql = " UPDATE JDBC_BOARD\r\n" + 
+					 " SET BOARD_TITLE = ?, BOARD_WRITER = ?, \r\n" + 
+					 "     BOARD_CONTENT = ?, BOARD_DATE = SYSDATE\r\n" + 
+					 " WHERE BOARD_NO = ?";
+
+		System.out.print("수정할 게시글 번호를 선택하세요 : ");
+		int num = sc.nextInt();
+		sc.nextLine();
+		
+		System.out.print(" 제목 : ");
+		String title = sc.nextLine();
+		
+		System.out.print(" 내용 : ");
+		String content = sc.nextLine();
+		
+		System.out.print(" 작성자(닉네임) : ");
+		String writer = sc.nextLine();
+		
+		List<Object> param = new ArrayList<Object>();
+		
+		param.add(title);
+		param.add(writer);
+		param.add(content);
+		param.add(num);
+		
+		jdbc.update(sql, param);
 	}
 
 
@@ -109,23 +161,81 @@ public class Homework08_0605 {
 		System.out.println();
 		
 		System.out.print(" 제목 : ");
-		String boardTitle = sc.nextLine();
-		
-		System.out.print(" 작성자(닉네임) : ");
-		String boardWriter = sc.nextLine();
+		String title = sc.nextLine();
 		
 		System.out.print(" 내용 : ");
-		String boardContent = sc.nextLine();
+		String content = sc.nextLine();
 		
-		jdbc.insertBoard(sql, boardTitle, boardWriter, boardContent);
+		System.out.print(" 작성자(닉네임) : ");
+		String writer = sc.nextLine();
+		
+		List<Object> param = new ArrayList<Object>();
+		param.add(title);
+		param.add(writer);
+		param.add(content);
+		
+		jdbc.update(sql, param);
 	}
 
 
 	private void printAll() {
-		String sql = "";
-		
 
-		System.out.println("< 이전 페이지 : 다음페이지 >");
+		int page = 1;
+
+		while (true) {
+			String sql = "SELECT *\r\n" + 
+						 "FROM (SELECT ROWNUM RN, B.*\r\n" + 
+						 "      FROM (SELECT BOARD_NO, TO_CHAR(BOARD_DATE) BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\r\n" + 
+						 "            FROM JDBC_BOARD ORDER BY BOARD_NO) B)\r\n" + 
+						 "WHERE RN BETWEEN ? AND ?";
+
+			int prePage = (page-1) * pageSize +1;
+			int nextPage = page * pageSize;
+
+			List<Object> param = new ArrayList<Object>();
+			param.add(prePage);
+			param.add(nextPage);
+
+			List<Map<String, Object>> printList =  jdbc.SelectList(sql, param);
+
+			if (printList.isEmpty()) {
+				System.out.println("마지막 페이지입니다.");
+				page--;
+				printAll();
+			}
+			
+			for (Map<String, Object> map : printList) {
+				BigDecimal no = (BigDecimal) map.get("BOARD_NO");
+				String date = (String) map.get("BOARD_DATE");
+				String writter = (String) map.get("BOARD_WRITER");
+				String title = (String) map.get("BOARD_TITLE");
+				String content = (String) map.get("BOARD_CONTENT");
+				
+				System.out.println("No." + no + " [" + date + "] [작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
+			}
+			System.out.println();
+			System.out.println(page + " 페이지");
+			System.out.println();
+
+			System.out.println("< 이전 페이지 : 다음페이지 >");
+			System.out.println("1. 종료");
+			String sel = sc.nextLine();
+
+			switch (sel) {
+				case "<":
+						page--;
+					break;
+				case ">":
+						page++;
+					break;
+				case "1":
+					return;
+				default:
+					System.out.println("잘못 입력했습니다. 다시 입력하세요.");
+					break;
+			}
+		}
+
 	}
 
 
@@ -140,7 +250,8 @@ public class Homework08_0605 {
 		System.out.println("  5. 게시글 검색 ");
 		System.out.println("  6. 종료");
 		System.out.println("----------------------");
-		System.out.print("원하는 작업 선택 >> ");
+		System.out.print("원하는 메뉴를 선택하세요 >> ");
+		System.out.println();
 	}
 	
 }

@@ -47,7 +47,13 @@ public class T01MemberInfoTest {
 	// 1. Connection 작업 -> 잘 연결되면 객체가 반환됨
 	// Connection 객체 없이 PreparedStatement 객체를 만들 수 없음
 	// PreparedStatement를 가지고 쿼리를 실행함
-	// select update delete => PreparedStatement의 execute 사용
+	
+	// executeQuery => select 쓸 때 사용
+	// executeUpdate => DML문 쓸 때 사용, update delete insert
+	
+	// pstmt.executeUpdate(); => 성공한 쿼리의 행 수를 반환, 
+	// (update 5줄 성공하면 5 반환, insert 0줄 성공하면 0 반환)
+	
 	// ResultSet 타입의 객체 => select 값을 가져오게 도와줌
 	// 사용하고 나면 꼭 close()해줘야 함 (자원반납)
 	
