@@ -34,7 +34,7 @@ public class T02StaticBlockTest {
 	
 	public static void main(String[] args) {
 		
-		new T02StaticBlockTest();
+//		new T02StaticBlockTest();
 //		
 //		new T02StaticBlockTest();
 	}

@@ -111,9 +111,10 @@ public class Homework08_0605 {
 						 " WHERE BOARD_DATE LIKE TO_DATE(?, 'YYYY-MM-DD')\n" + 
 						 " ORDER BY BOARD_NO";
 			
-			System.out.println("날짜를 입력해주세요.");
-//			String dateSel = "%" + sc.nextLine() + "%";
+//			System.out.println("날짜를 입력해주세요. (예 : 2024.01.01)");
+//			String dateSel = sc.nextLine();
 			
+			System.out.println("날짜를 입력해주세요.");
 			System.out.print("연도 : ");
 			String year = sc.nextLine();
 			System.out.print("월 : ");
