@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
 import kr.or.ddit.util.JDBCUtilHw08;
 
 /*
@@ -51,35 +52,34 @@ public class Homework08_0605 {
 
 	
 	public void start() {		
-		int num;
+		String num;
 
 		do {
 			displayMenu();
-			num = sc.nextInt();
-			sc.nextLine();
+			num = sc.nextLine();
 			switch (num) {
-				case 1:
+				case "1":
 					printAll();
 					break;
-				case 2:
+				case "2":
 					insertBoard();
 					break;
-				case 3:
+				case "3":
 					updateBoard();
 					break;
-				case 4:
+				case "4":
 					deleteBoard();
 					break;
-				case 5:
+				case "5":
 					searchBoard();
 					break;
-				case 6:
+				case "6":
 					close();
 					break;
 				default:
-					System.out.println("메뉴를 잘못 입력했습니다. 다시입력하세요");
+					System.out.println("메뉴를 잘못 입력했습니다. 다시 입력하세요");
 			}
-		} while (num != 6);
+		} while (!num.equals("6"));
 	}
 
 
@@ -89,12 +89,136 @@ public class Homework08_0605 {
 
 
 	private void searchBoard() {
-		// TODO Auto-generated method stub
+		System.out.println("어떤 것으로 검색할까요?");
+		System.out.println("1. 날짜");
+		System.out.println("2. 작성자");
+		System.out.println("3. 제목");
+		System.out.println("4. 내용");
+		System.out.println("5. 뒤로가기");
+		System.out.println();
 		
+		String sel = sc.nextLine();
+		
+		if ( !(sel.equals("1")) && !(sel.equals("2")) && !(sel.equals("3")) && !(sel.equals("4")) ) {
+			System.out.println("잘못된 입력입니다.");
+			return;
+		}
+		
+		if (sel.equals("1")) {
+			// 날짜 검색
+			String sql = " SELECT BOARD_NO, TO_CHAR(BOARD_DATE, 'YYYY/MM/DD HH24:MI') BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\n" + 
+						 " FROM JDBC_BOARD\n" + 
+						 " WHERE BOARD_DATE LIKE TO_DATE(?, 'YYYY-MM-DD')\n" + 
+						 " ORDER BY BOARD_NO";
+			
+			System.out.println("날짜를 입력해주세요.");
+//			String dateSel = "%" + sc.nextLine() + "%";
+			
+			System.out.print("연도 : ");
+			String year = sc.nextLine();
+			System.out.print("월 : ");
+			String month = sc.nextLine();
+			System.out.print("일 : ");
+			String day = sc.nextLine();
+			
+			String dateSel = year + month + day;
+			
+			List<Object> param = new ArrayList<Object>();
+			param.add(dateSel);
+			
+			List<Map<String, Object>> dateSearch = jdbc.selectList(sql, param);
+			
+			for (Map<String, Object> map : dateSearch) {
+				BigDecimal no = (BigDecimal) map.get("BOARD_NO");
+				String date = (String) map.get("BOARD_DATE");
+				String writter = (String) map.get("BOARD_WRITER");
+				String title = (String) map.get("BOARD_TITLE");
+				String content = (String) map.get("BOARD_CONTENT");
+
+				System.out.println("No." + no + " [" + date + "]\t[작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
+			}
+			
+		} else if (sel.equals("2")) {
+			// 작성자 검색
+			String sql = "SELECT BOARD_NO, TO_CHAR(BOARD_DATE, 'YYYY/MM/DD HH24:MI') BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\n" + 
+						 "FROM JDBC_BOARD\n" + 
+						 "WHERE BOARD_WRITER LIKE ?\n" + 
+						 "ORDER BY BOARD_NO";
+			
+			System.out.println("검색할 작성자를 입력해주세요.");
+			String writterSel = "%" + sc.nextLine() + "%";
+			
+			List<Object> param = new ArrayList<Object>();
+			param.add(writterSel);
+			
+			List<Map<String, Object>> writterSearch = jdbc.selectList(sql, param);
+			
+			for (Map<String, Object> map : writterSearch) {
+				BigDecimal no = (BigDecimal) map.get("BOARD_NO");
+				String date = (String) map.get("BOARD_DATE");
+				String writter = (String) map.get("BOARD_WRITER");
+				String title = (String) map.get("BOARD_TITLE");
+				String content = (String) map.get("BOARD_CONTENT");
+
+				System.out.println("No." + no + "\t[" + date + "] [작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
+			}
+			
+		} else if (sel.equals("3")) {
+			// 제목 검색
+			String sql = "SELECT BOARD_NO, TO_CHAR(BOARD_DATE, 'YYYY/MM/DD HH24:MI') BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\n" + 
+						 "FROM JDBC_BOARD\n" + 
+						 "WHERE BOARD_TITLE LIKE ?\n" + 
+						 "ORDER BY BOARD_NO";
+			
+			System.out.println("검색할 제목을 입력해주세요.");
+			String titleSel = "%" + sc.nextLine() + "%";
+			
+			List<Object> param = new ArrayList<Object>();
+			param.add(titleSel);
+			
+			List<Map<String, Object>> titleSearch = jdbc.selectList(sql, param);
+			
+			for (Map<String, Object> map : titleSearch) {
+				BigDecimal no = (BigDecimal) map.get("BOARD_NO");
+				String date = (String) map.get("BOARD_DATE");
+				String writter = (String) map.get("BOARD_WRITER");
+				String title = (String) map.get("BOARD_TITLE");
+				String content = (String) map.get("BOARD_CONTENT");
+
+				System.out.println("No." + no + "\t[" + date + "]\t[작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
+			}
+			
+		} else if (sel.equals("4")) {
+			// 내용 검색
+			String sql = "SELECT BOARD_NO, TO_CHAR(BOARD_DATE, 'YYYY/MM/DD HH24:MI') BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\n" + 
+						 "FROM JDBC_BOARD\n" + 
+						 "WHERE BOARD_CONTENT LIKE ?\n" + 
+						 "ORDER BY BOARD_NO";
+			
+			System.out.println("검색할 내용을 입력해주세요.");
+			String contentSel = "%" + sc.nextLine() + "%";
+			
+			List<Object> param = new ArrayList<Object>();
+			param.add(contentSel);
+			
+			List<Map<String, Object>> contentSearch = jdbc.selectList(sql, param);
+			
+			for (Map<String, Object> map : contentSearch) {
+				BigDecimal no = (BigDecimal) map.get("BOARD_NO");
+				String date = (String) map.get("BOARD_DATE");
+				String writter = (String) map.get("BOARD_WRITER");
+				String title = (String) map.get("BOARD_TITLE");
+				String content = (String) map.get("BOARD_CONTENT");
+
+				System.out.println("No." + no + "\t[" + date + "]\t[작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
+			}
+			
+		} else return;
 	}
 
 
 	private void deleteBoard() {
+		printAll();
 
 		String sql = " DELETE FROM JDBC_BOARD\r\n" + 
 					 " WHERE BOARD_NO = ?";
@@ -110,18 +234,17 @@ public class Homework08_0605 {
 		
 		if (sel==1) {
 			List<Object> param = new ArrayList<Object>();
-			
 			param.add(num);
 			
 			jdbc.update(sql, param);
 		} else if (sel==2) { 
 			System.out.println("삭제가 취소되었습니다.");
 		}
-		
 	}
 
 
 	private void updateBoard() {
+		printAll();
 
 		String sql = " UPDATE JDBC_BOARD\r\n" + 
 					 " SET BOARD_TITLE = ?, BOARD_WRITER = ?, \r\n" + 
@@ -142,7 +265,6 @@ public class Homework08_0605 {
 		String writer = sc.nextLine();
 		
 		List<Object> param = new ArrayList<Object>();
-		
 		param.add(title);
 		param.add(writer);
 		param.add(content);
@@ -179,15 +301,18 @@ public class Homework08_0605 {
 
 
 	private void printAll() {
+		System.out.println();
+		System.out.println("======= 전체 목록 보기 =======");
 
 		int page = 1;
+		boolean end = false;
 
 		while (true) {
-			String sql = "SELECT *\r\n" + 
-						 "FROM (SELECT ROWNUM RN, B.*\r\n" + 
-						 "      FROM (SELECT BOARD_NO, TO_CHAR(BOARD_DATE) BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\r\n" + 
+			String sql = " SELECT *\r\n" + 
+						 " FROM (SELECT ROWNUM RN, B.*\r\n" + 
+						 "      FROM (SELECT BOARD_NO, TO_CHAR(BOARD_DATE, 'YYYY/MM/DD HH24:MI') BOARD_DATE, BOARD_WRITER, BOARD_TITLE, BOARD_CONTENT\r\n" + 
 						 "            FROM JDBC_BOARD ORDER BY BOARD_NO) B)\r\n" + 
-						 "WHERE RN BETWEEN ? AND ?";
+						 " WHERE RN BETWEEN ? AND ?";
 
 			int prePage = (page-1) * pageSize +1;
 			int nextPage = page * pageSize;
@@ -196,46 +321,50 @@ public class Homework08_0605 {
 			param.add(prePage);
 			param.add(nextPage);
 
-			List<Map<String, Object>> printList =  jdbc.SelectList(sql, param);
+			List<Map<String, Object>> printList =  jdbc.selectList(sql, param);
 
 			if (printList.isEmpty()) {
 				System.out.println("마지막 페이지입니다.");
+				System.out.println();
 				page--;
-				printAll();
+				end = true;
 			}
-			
-			for (Map<String, Object> map : printList) {
-				BigDecimal no = (BigDecimal) map.get("BOARD_NO");
-				String date = (String) map.get("BOARD_DATE");
-				String writter = (String) map.get("BOARD_WRITER");
-				String title = (String) map.get("BOARD_TITLE");
-				String content = (String) map.get("BOARD_CONTENT");
-				
-				System.out.println("No." + no + " [" + date + "] [작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
-			}
-			System.out.println();
-			System.out.println(page + " 페이지");
-			System.out.println();
 
-			System.out.println("< 이전 페이지 : 다음페이지 >");
-			System.out.println("1. 종료");
+			if (!printList.isEmpty()) {
+				end = false;
+				for (Map<String, Object> map : printList) {
+					BigDecimal no = (BigDecimal) map.get("BOARD_NO");
+					String date = (String) map.get("BOARD_DATE");
+					String writter = (String) map.get("BOARD_WRITER");
+					String title = (String) map.get("BOARD_TITLE");
+					String content = (String) map.get("BOARD_CONTENT");
+
+					System.out.println("No." + no + "\t[" + date + "]\t[작성자] " + writter + "\t[제목] " + title + "\t[내용] " + content);
+				}
+				System.out.println();
+				System.out.println(page + " 페이지");
+				System.out.println();
+
+				System.out.println("< 이전 페이지 : 다음페이지 >");
+				System.out.println("1. 뒤로가기");
+			}
 			String sel = sc.nextLine();
 
 			switch (sel) {
-				case "<":
-						page--;
-					break;
-				case ">":
-						page++;
-					break;
-				case "1":
-					return;
-				default:
-					System.out.println("잘못 입력했습니다. 다시 입력하세요.");
-					break;
+			case "<":
+				if (page > 1 && end == true) break;
+				if (page > 1) page--;
+				break;
+			case ">":
+				page++;
+				break;
+			case "1":
+				return;
+			default:
+				System.out.println("잘못 입력했습니다. 다시 입력하세요.");
+				break;
 			}
 		}
-
 	}
 
 
@@ -253,5 +382,4 @@ public class Homework08_0605 {
 		System.out.print("원하는 메뉴를 선택하세요 >> ");
 		System.out.println();
 	}
-	
 }

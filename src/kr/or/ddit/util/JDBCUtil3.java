@@ -1,48 +1,40 @@
 package kr.or.ddit.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
+import java.util.ResourceBundle;
 
 
 /*
  	db.Properties 파일의 내용으로 DB정보를 설정하는 방법
  	
- 	방법 1) Properties 객체 이용하기
+ 	방법 2) ResourceBundle 객체 이용하기
  */
 
-public class JDBCUtil2 {
+public class JDBCUtil3 {
 	
-	static Properties prop;
+	static ResourceBundle bundle;
 	
 	static {
+		
+		// db.properties에 저장한 데이터를 불러오기
+		bundle = ResourceBundle.getBundle("db");
 
 		try {
-			prop = new Properties();
-			
-			// db.properties에 저장한 데이터를 불러오기
-			prop.load(new FileInputStream("./res/db.properties"));
 			
 			// db.properties 내부의 driver value값을 가져옴
 			// driver = oracle.jdbc.driver.OracleDriver
-			Class.forName(prop.getProperty("driver"));
+			Class.forName(bundle.getString("driver"));
 			
 			System.out.println("드라이버 로딩 성공!");
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("드라이버 로딩 실패!");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -53,9 +45,9 @@ public class JDBCUtil2 {
 		try {
 			// db.properties에 저장한 데이터를 불러오기
 			return 	DriverManager.getConnection(
-					prop.getProperty("url"),
-					prop.getProperty("username"),
-					prop.getProperty("password"));
+					bundle.getString("url"),
+					bundle.getString("username"),
+					bundle.getString("password"));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

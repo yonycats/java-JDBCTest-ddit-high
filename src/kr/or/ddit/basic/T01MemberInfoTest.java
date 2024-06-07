@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.Scanner;
 
-import kr.or.ddit.util.JDBCUtil2;
+import kr.or.ddit.util.JDBCUtil3;
 
 // JDBC(Java Database Connectivity) => 데이터베이스 연결 자바 API
 
@@ -126,7 +126,7 @@ public class T01MemberInfoTest {
 		System.out.println("------------------------------------------");
 		
 		try {
-			conn = JDBCUtil2.getConnection();
+			conn = JDBCUtil3.getConnection();
 			
 			stmt = conn.createStatement();
 			
@@ -153,7 +153,7 @@ public class T01MemberInfoTest {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			JDBCUtil2.close(conn, stmt, pstmt, rs);
+			JDBCUtil3.close(conn, stmt, pstmt, rs);
 		}
 		
 	}
@@ -171,7 +171,7 @@ public class T01MemberInfoTest {
 		////////////////////////////////
 		
 		try {
-			conn = JDBCUtil2.getConnection();
+			conn = JDBCUtil3.getConnection();
 			
 			String sql = " DELETE FROM MYMEMBER WHERE MEM_ID = ? ";
 			
@@ -190,7 +190,7 @@ public class T01MemberInfoTest {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			JDBCUtil2.close(conn, stmt, pstmt, rs);
+			JDBCUtil3.close(conn, stmt, pstmt, rs);
 		}
 		
 	}
@@ -236,7 +236,7 @@ public class T01MemberInfoTest {
 		////////////////////////////////
 		
 		try {
-			conn = JDBCUtil2.getConnection();
+			conn = JDBCUtil3.getConnection();
 			
 			String sql = " UPDATE MYMEMBER\r\n" + 
 						 " SET MEM_NAME = ?, MEM_TEL = ?, MEM_ADDR = ?\r\n" + 
@@ -260,7 +260,7 @@ public class T01MemberInfoTest {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			JDBCUtil2.close(conn, stmt, pstmt, rs);
+			JDBCUtil3.close(conn, stmt, pstmt, rs);
 		}
 		
 	}
@@ -306,20 +306,20 @@ public class T01MemberInfoTest {
 		// JDBC 코딩
 		try {
 			
-			// JDBCUtil2로 옮김
+			// JDBCUtil3로 옮김
 //			// 옵션
 //			// 패키지명을 포함한 클래스명 불러오기
 //			// ojdbc6.jar파일 추가하여 Build Path 추가
 //			Class.forName("oracle.jdbc.driver.OracleDriver");
 			
 			
-			// JDBCUtil2로 옮김
+			// JDBCUtil3로 옮김
 //			conn = DriverManager.getConnection(
 //					"jdbc:oracle:thin:@localhost:1521:xe", 
 //					"pc11_5", 
 //					"java");
 			
-			conn = JDBCUtil2.getConnection();
+			conn = JDBCUtil3.getConnection();
 			
 			// 쿼리 맨 앞줄은 쿼리 오류 방지를 위해 한칸씩 띄워주는게 좋음
 			String sql = " INSERT INTO MYMEMBER(MEM_ID, MEM_NAME, MEM_TEL, MEM_ADDR)" + 
@@ -355,8 +355,8 @@ public class T01MemberInfoTest {
 //			if (stmt != null) try {stmt.close();} catch (SQLException e) {}
 //			if (conn != null) try {conn.close();} catch (SQLException e) {}			
 			
-			// JDBCUtil2로 옮김
-			JDBCUtil2.close(conn, stmt, pstmt, rs);
+			// JDBCUtil3로 옮김
+			JDBCUtil3.close(conn, stmt, pstmt, rs);
 		}
 		
 	}

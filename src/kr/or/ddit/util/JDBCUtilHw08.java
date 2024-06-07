@@ -43,15 +43,9 @@ public class JDBCUtilHw08 {
 		if (stmt != null) try {stmt.close();} catch (SQLException e) {}
 		if (conn != null) try {conn.close();} catch (SQLException e) {}		
 	}
-	
-	
-	public void search() {
-		// TODO Auto-generated method stub
-		
-	}
 
-
-	// update, delete, insert
+	
+	// executeUpdate() => update, delete, insert
 	public void update(String sql, List<Object> param) {
 		 
 		try {
@@ -77,7 +71,8 @@ public class JDBCUtilHw08 {
 	}
 
 
-	public List<Map<String, Object>> SelectList(String sql, List<Object> param) {
+	// executeQuery() => select
+	public List<Map<String, Object>> selectList(String sql, List<Object> param) {
 		
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		
@@ -95,10 +90,18 @@ public class JDBCUtilHw08 {
 			int columnCount = rsmd.getColumnCount();
 			
 			while (rs.next()) {
+				
 				Map<String, Object> row = new HashMap<String, Object>();
 				for (int i=1; i<=columnCount; i++) {
 					String key = rsmd.getColumnName(i);
-					Object value = rs.getObject(i);
+					Object value = "";
+					
+					if (rsmd.getColumnTypeName(i).equals("CLOB")) {
+						value = rs.getNString(i);
+					} else {
+						value = rs.getObject(i);
+					}
+					
 					row.put(key, value);
 				}
 				list.add(row);
