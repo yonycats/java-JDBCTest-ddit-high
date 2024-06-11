@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+  </Appenders>
+
+  <Loggers>
+  	<!-- 여기에 로거 추가 -->
+
+	<!-- Root로거는 모든 로거가 상속을 받음, 가장 기본이 되는 설정
+		  루트를 만들고 다른 설정의 로거가 필요하면 별도로 만들어서 사용함 -->
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+
+</Configuration>
+
+
+
+
+

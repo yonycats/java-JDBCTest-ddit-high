@@ -5,8 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Scanner;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import kr.or.ddit.util.JDBCUtil3;
 
@@ -64,6 +67,9 @@ public class T01MemberInfoTest {
 	
 	private Scanner scan = new Scanner(System.in); 
 	
+	private static final Logger SQL_LOGGER = LogManager.getLogger("log4jexam.sql.Query");
+	private static final Logger PARAM_LOGGER = LogManager.getLogger("log4jexam.sql.Parameter");
+	private static final Logger RESULT_LOGGER = LogManager.getLogger(T01MemberInfoTest.class);
 	
 	public static void main(String[] args) {
 		T01MemberInfoTest memObj = new T01MemberInfoTest();
@@ -140,10 +146,11 @@ public class T01MemberInfoTest {
 				String memAddr = rs.getNString("mem_addr");
 			
 				// LocalDate => 자바 8부터 지원
-				// 시간까지 출력
-//				LocalDateTime regDt = rs.getTimestamp("reg_dt").toLocalDateTime();
+				// 시간까지 출력 
+				LocalDateTime regDt = rs.getTimestamp("reg_dt").toLocalDateTime();
+				
 				// 날짜만 출력
-				LocalDate regDt = rs.getTimestamp("reg_dt").toLocalDateTime().toLocalDate();
+//				LocalDate regDt = rs.getTimestamp("reg_dt").toLocalDateTime().toLocalDate();
 				
 				System.out.println(memId + "\t" + regDt + "\t" + memName + "\t" + memTel +"\t" + memAddr);
 			}
@@ -325,6 +332,13 @@ public class T01MemberInfoTest {
 			String sql = " INSERT INTO MYMEMBER(MEM_ID, MEM_NAME, MEM_TEL, MEM_ADDR)" + 
 						 "    VALUES (?, ?, ?, ?)";
 			
+			
+			// debug 레벨
+			// 로깅 프레임워크를 이용하여 debug로 로그 남기고 있는 중임
+			SQL_LOGGER.debug("쿼리문 : " + sql);
+			
+			
+			
 			pstmt = conn.prepareStatement(sql);
 			
 			// pstmt.setString(parameterIndex, x); => 인덱스가 1부터 시작함
@@ -333,10 +347,26 @@ public class T01MemberInfoTest {
 			pstmt.setString(3, memTel);
 			pstmt.setString(4, memAddr);
 			
+			
+			
+			// debug 레벨
+			PARAM_LOGGER.debug("파라미터 값 : memID = " + memId + ", memName = " + memName + ", memTel = " + memTel + ", memAddr = " + memAddr);
+			
+			
+			
 			// executeUpdate
 			// executeQuery
 			// 처리 결과에 따라서 0과 1을 반환함
 			int cnt = pstmt.executeUpdate();
+			
+			
+			
+			// 결과값 로그로 출력해보기, info 레벨
+			// {}를 적고 바깥이 변수를 넣으면 원하는 값이 들어감
+			// 여러개 넣고 싶으면, ("결과값 : {} {} {}", cnt, cnt, cnt);
+			RESULT_LOGGER.info("결과값 : {}", cnt);
+			
+			
 			
 			if (cnt > 0) {
 				System.out.println(memId + "인 회원정보 등록 성공!");
