@@ -2,17 +2,41 @@
 <Configuration>
 
   <Appenders>
+	<!-- Console Appenders -->
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
+    
+    <!-- File Appenders -->
+	<!-- 파일 만들기 -->
+    <File name="MyFile" fileName="Logs/app.log">
+    	<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
+    </File>
+    
   </Appenders>
 
   <Loggers>
   	<!-- 여기에 로거 추가 -->
-
+	<!-- 각각에 로거에 레벨을 별도로 부여 -->
+	<!-- additivity="false" => 동일한 AppenderRef를 출력하지 않도록 함, 
+		 Root에서도 1번씩 출력되고, 여기서도 만든대로 1번씩 출력되기 때문에 중복된 Console문을 제거함 -->
+	<!-- 여기서 별도로 추가해서 만들 로거는 메인에서 부르는 메서드와 매칭됨 -->
+  	<Logger name="log4jexam.sql.Query" level="debug" additivity="false">
+  		<AppenderRef ref="Console"/>
+  		<AppenderRef ref="MyFile"/>
+  	</Logger>
+  	
+  	<Logger name="log4jexam.sql.Parameter" level="info" additivity="false">
+  	  		<AppenderRef ref="Console"/>
+  	</Logger>
+  	
+  	<Logger name="kr.or.ddit.basic.T01MemberInfoTest" level="debug" additivity="false">
+  	  		<AppenderRef ref="Console"/>
+  	</Logger>
+  	
 	<!-- Root로거는 모든 로거가 상속을 받음, 가장 기본이 되는 설정
 		  루트를 만들고 다른 설정의 로거가 필요하면 별도로 만들어서 사용함 -->
-    <Root level="info">
+    <Root level="debug">
       <AppenderRef ref="Console"/>
     </Root>
   </Loggers>
